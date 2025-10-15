@@ -1,3 +1,5 @@
+from codecs import make_encoding_map
+
 from flask import Flask, make_response, request, jsonify
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
@@ -55,6 +57,50 @@ class PlantById(Resource):
 
         response = make_response(
             plant_dict,
+            200
+        )
+
+        return response
+
+    def patch(self, id):
+        plant = Plant.query.filter(Plant.id == id).first()
+
+        if not plant:
+            return make_response(
+                {"error" : f"Plant with id {id} not found."},
+                404
+            )
+
+        data = request.get_json()
+
+        for attr, value in data.items():
+            setattr(plant, attr, value)
+
+        db.session.commit()
+
+        plant_dict = plant.to_dict()
+
+        response = make_response(
+            plant_dict,
+            200
+        )
+
+        return response
+
+    def delete(self, id):
+        plant = Plant.query.filter(Plant.id == id).first()
+
+        if not plant:
+            return make_response(
+                {"error" : f"Plant with id {id} not found."},
+                404
+            )
+
+        db.session.delete(plant)
+        db.session.commit()
+
+        response = make_response(
+            {"message" : "Plant deleted successfully."},
             200
         )
 
