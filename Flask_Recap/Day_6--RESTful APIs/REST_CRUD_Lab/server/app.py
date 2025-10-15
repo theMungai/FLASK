@@ -1,5 +1,3 @@
-from codecs import make_encoding_map
-
 from flask import Flask, make_response, request, jsonify
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
