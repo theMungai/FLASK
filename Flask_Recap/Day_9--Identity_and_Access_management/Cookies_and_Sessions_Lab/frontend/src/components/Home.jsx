@@ -7,15 +7,8 @@ function Home() {
 
     useEffect(() => {
         fetch("/articles")
-            .then((res) => {
-                if (!res.ok) throw new Error("Failed to fetch articles");
-                return res.json();
-            })
-            .then((data) => setArticles(Array.isArray(data) ? data : []))
-            .catch((err) => {
-                console.error(err);
-                setArticles([]);
-            });
+            .then((r) => r.json())
+            .then(setArticles);
     }, []);
 
 

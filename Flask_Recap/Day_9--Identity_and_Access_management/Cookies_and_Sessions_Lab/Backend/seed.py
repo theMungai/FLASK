@@ -1,19 +1,36 @@
-from faker import Faker
+#!/usr/bin/env python3
+
 from random import randint
 
-from models import db, Article, User
+from faker import Faker
+
 from app import app
+from models import db, Article, User
 
 fake = Faker()
 
 with app.app_context():
 
-    print("Deleting all records")
+    print("Deleting all records...")
     Article.query.delete()
     User.query.delete()
 
+    fake = Faker()
+
     print("Creating users...")
-    users = [User(name = fake.name()) for i in range(25)]
+    users = []
+    usernames = []
+    for i in range(25):
+
+        username = fake.first_name()
+        while username in usernames:
+            username = fake.first_name()
+
+        usernames.append(username)
+
+        user = User(username=username)
+        users.append(user)
+
     db.session.add_all(users)
 
     print("Creating articles...")
@@ -24,16 +41,15 @@ with app.app_context():
 
         article = Article(
             author=fake.name(),
-            title = fake.sentence(),
-            content = content,
-            preview = preview,
-            minutes_to_read = randint(1, 20)
+            title=fake.sentence(),
+            content=content,
+            preview=preview,
+            minutes_to_read=randint(1,20),
         )
 
         articles.append(article)
 
     db.session.add_all(articles)
 
-
     db.session.commit()
-    print("Complete")
+    print("Complete.")

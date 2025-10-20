@@ -17,14 +17,14 @@ api = Api(app)
 
 
 class ClearSession(Resource):
-    def get(self):
-        session.clear()
-        return make_response(
-            {"message": "200: Successfully cleared session data."},
-            200
-        )
+    def delete(self):
+        session["page_views"] = None
+        session["user_id"] = None
 
-api.add_resource(ClearSession, "/clear")
+        return make_response(
+            {"message" : "204 : No Content"},
+            204
+        )
 
 
 
@@ -38,9 +38,6 @@ class Articles(Resource):
         )
 
         return response
-
-api.add_resource(Articles, "/articles")
-
 
 
 class ShowArticle(Resource):
@@ -68,7 +65,53 @@ class ShowArticle(Resource):
 
         return response
 
+class Login(Resource):
+    def post(self):
+        data = request.get_json()
+        username = data.get('username')
+
+        if not username:
+            return make_response({"error": "Username is required"}, 400)
+
+        user = User.query.filter(User.username == username).first()
+
+        session["user_id"] = user.id
+
+        return make_response(user.to_dict(), 200)
+
+
+class Logout(Resource):
+    def delete(self):
+        session["user_id"] = None
+        return make_response(
+            {"message" : "204 : No Content"},
+            204
+        )
+
+
+class CheckSession(Resource):
+    def get(self):
+        user = User.query.filter(User.id == session.get("user_id")).first()
+
+        if user:
+            return make_response(
+                user.to_dict(),
+                200
+            )
+        else:
+            return make_response(
+                {"message": "401 : Not Authorized"},
+                401
+            )
+
+
+api.add_resource(ClearSession, "/clear")
+api.add_resource(Articles, "/articles")
 api.add_resource(ShowArticle,"/articles/<int:id>")
+api.add_resource(Login, "/login")
+api.add_resource(Logout, "/logout")
+api.add_resource(CheckSession, "/check_session")
+
 
 
 if __name__ == "__main__":

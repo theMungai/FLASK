@@ -31,7 +31,7 @@ class User(db.Model, SerializerMixin):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
+    username = db.Column(db.String)
 
     articles = db.relationship("Article", back_populates="user")
 
