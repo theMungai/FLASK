@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from random import randint
 
 from faker import Faker
@@ -14,8 +12,6 @@ with app.app_context():
     print("Deleting all records...")
     Article.query.delete()
     User.query.delete()
-
-    fake = Faker()
 
     print("Creating users...")
     users = []
