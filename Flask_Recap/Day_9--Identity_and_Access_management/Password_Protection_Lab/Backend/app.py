@@ -82,7 +82,7 @@ class Login(Resource):
         if not user:
             return make_response(
                 {"error" : "User not found."},
-                400
+                404
             )
 
         if not bcrypt.check_password_hash(user._password_hash, password):
